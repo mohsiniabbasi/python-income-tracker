@@ -91,63 +91,64 @@ def show_month(month):
     month_profit = month_income - month_expenses
     print(f"Month {month} Income: £{month_income:.2f}, Expenses: £{month_expenses:.2f}, Profit: £{month_profit:.2f}")
 
-today = datetime.now().date()
-#tax_year_start = date(2026, 4, 6)
-if today >= date(today.year, 4, 6):
-    tax_year_start = date(today.year, 4, 6)
-else:
-    tax_year_start = date(today.year - 1, 4, 6)
-days = (today - tax_year_start).days
-week = days // 7 + 1
-tax_year = tax_year_start.year
-
-try:
-
-    f = open("entries.json", "r")
-    entries = json.load(f)
-    f.close()
-except FileNotFoundError:
-    entries = []
-
-while True:
-    show_total()
-    print("1--- Add today's income and expenses: ")
-    print("2--- Which week number you want to see: ")
-    print("3--- Enter a date (yyyy-mm-dd) to see that day's figures: ")
-    print("4--- Show all weeks: ")
-    print("5--- Show all months: ")
-    print("x--- Exit: ")
-    choice = input("Choose: ")
-    if choice == "1":
-        daily_income = ask_amount("Enter your today's income: £")
-        daily_expenses = ask_amount("Enter your today's expenses: £")
-
-        daily_profit = daily_income - daily_expenses
-        print(f"Date: {today}, Week: {week}, Daily Profit: £{daily_profit:.2f}")
-
-        entry = {"date": str(today), "week": week, "tax_year": tax_year, "income": daily_income, "expenses": daily_expenses, "profit": daily_profit}
-        print("Daily Profit Entry:", entry)
-
-        entries.append(entry)
-
-        f = open("entries.json", "w")
-        json.dump(entries, f, indent=2)
-        f.close()
-        print("Entries saved to entries.json")
-        print("This week so far: ")
-        show_week(week)
-
-    elif choice == "2":
-       choose = int(ask_amount("Enter the week number : "))
-       show_week(choose)
-    elif choice == "3":
-        chosen_date = input("Enter a date (yyyy-mm-dd): ")
-        show_day(chosen_date)
-    elif choice == "4":
-        show_all_weeks()
-    elif choice == "5":
-        show_all_months()
-    elif choice == "x":
-        break
+if __name__ == "__main__":
+    today = datetime.now().date()
+    #tax_year_start = date(2026, 4, 6)
+    if today >= date(today.year, 4, 6):
+        tax_year_start = date(today.year, 4, 6)
     else:
-        print("Invalid choice. Please select 1, 2, 3, 4, 5, x.")
+        tax_year_start = date(today.year - 1, 4, 6)
+    days = (today - tax_year_start).days
+    week = days // 7 + 1
+    tax_year = tax_year_start.year
+
+    try:
+
+        f = open("entries.json", "r")
+        entries = json.load(f)
+        f.close()
+    except FileNotFoundError:
+        entries = []
+
+    while True:
+        show_total()
+        print("1--- Add today's income and expenses: ")
+        print("2--- Which week number you want to see: ")
+        print("3--- Enter a date (yyyy-mm-dd) to see that day's figures: ")
+        print("4--- Show all weeks: ")
+        print("5--- Show all months: ")
+        print("x--- Exit: ")
+        choice = input("Choose: ")
+        if choice == "1":
+            daily_income = ask_amount("Enter your today's income: £")
+            daily_expenses = ask_amount("Enter your today's expenses: £")
+
+            daily_profit = daily_income - daily_expenses
+            print(f"Date: {today}, Week: {week}, Daily Profit: £{daily_profit:.2f}")
+
+            entry = {"date": str(today), "week": week, "tax_year": tax_year, "income": daily_income, "expenses": daily_expenses, "profit": daily_profit}
+            print("Daily Profit Entry:", entry)
+
+            entries.append(entry)
+
+            f = open("entries.json", "w")
+            json.dump(entries, f, indent=2)
+            f.close()
+            print("Entries saved to entries.json")
+            print("This week so far: ")
+            show_week(week)
+
+        elif choice == "2":
+            choose = int(ask_amount("Enter the week number : "))
+            show_week(choose)
+        elif choice == "3":
+            chosen_date = input("Enter a date (yyyy-mm-dd): ")
+            show_day(chosen_date)
+        elif choice == "4":
+            show_all_weeks()
+        elif choice == "5":
+            show_all_months()
+        elif choice == "x":
+            break
+        else:
+            print("Invalid choice. Please select 1, 2, 3, 4, 5, x.")

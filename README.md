@@ -50,6 +50,15 @@ Month 2026-04 (1-5) Income: £200.00, Expenses: £40.00, Profit: £160.00
 Month 2026-04 (6-30) Income: £320.00, Expenses: £65.00, Profit: £255.00
 ```
 
+## Run the tests
+
+The tests check the tax-year month split (1–5 April, 6–30 April and normal months), including the edge days 5 and 6 April.
+
+```
+python -m pip install pytest
+python -m pytest
+```
+
 ## Privacy
 
 Your figures are saved in `entries.json` on your own computer only. The file is listed in `.gitignore`, so it is never uploaded to GitHub.
