@@ -55,6 +55,8 @@ def show_all_weeks():
         if e["week"] not in weeks:
             weeks.append(e["week"])
     weeks.sort()
+    if len(weeks) == 0:
+        print("No entries found. Choose 1 to add one.")
     for w in weeks:
         show_week(w)
 
@@ -74,6 +76,8 @@ def show_all_months():
         if month_label(e["date"]) not in months:
             months.append(month_label(e["date"]))
     months.sort()
+    if months == []:
+        print("No entries found. Choose 1 to add one.")
     for m in months:
         show_month(m)
 
