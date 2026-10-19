@@ -103,6 +103,14 @@ def show_month(month):
     month_profit = month_income - month_expenses
     print(f"Month {month} Income: £{month_income:.2f}, Expenses: £{month_expenses:.2f}, Profit: £{month_profit:.2f}")
 
+def add_entry(income, expenses):
+    profit = income - expenses
+    entry = {"date": str(today), "week": week, "tax_year": tax_year, "income": income, "expenses": expenses, "profit": profit}
+    entries.append(entry)
+    f = open("entries.json", "w")
+    json.dump(entries, f, indent=2)
+    f.close()
+    return entry
 
 today = datetime.now().date()
     #tax_year_start = date(2026, 4, 6)
@@ -135,18 +143,9 @@ if __name__ == "__main__":
         if choice == "1":
             daily_income = ask_amount("Enter your today's income: £")
             daily_expenses = ask_amount("Enter your today's expenses: £")
-
-            daily_profit = daily_income - daily_expenses
-            print(f"Date: {today}, Week: {week}, Daily Profit: £{daily_profit:.2f}")
-
-            entry = {"date": str(today), "week": week, "tax_year": tax_year, "income": daily_income, "expenses": daily_expenses, "profit": daily_profit}
-            print("Daily Profit Entry:", entry)
-
-            entries.append(entry)
-
-            f = open("entries.json", "w")
-            json.dump(entries, f, indent=2)
-            f.close()
+            entry = add_entry(daily_income, daily_expenses)
+            print(f"Date: {today}, Week: {week}, Daily Profit: £{entry['profit']:.2f}")
+            
             print("Entries saved to entries.json")
             print("This week so far: ")
             show_week(week)
