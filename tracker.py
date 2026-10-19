@@ -14,7 +14,7 @@ def ask_amount(question):
         except ValueError:
             print("Invalid input. Please numbers only.")
 
-def show_week(week_number):
+def week_figures(week_number):
     week_income = 0
     week_expenses = 0
     for e in entries:
@@ -22,9 +22,13 @@ def show_week(week_number):
             week_income = week_income + e["income"]
             week_expenses = week_expenses + e["expenses"]
     week_profit = week_income - week_expenses
+    return week_income, week_expenses, week_profit
+
+def show_week(week_number):
+    week_income, week_expenses, week_profit = week_figures(week_number)
     print(f"Week number {week_number} Income: £{week_income:.2f}, Expenses: £{week_expenses:.2f}, Profit: £{week_profit:.2f}")
 
-def show_total():
+def total_figures():
     total_income = 0
     total_expenses = 0
     for e in entries:
@@ -37,9 +41,13 @@ def show_total():
     if taxable < 0:
         taxable = 0
     tax_estimate = taxable * (BASIC_RATE + NI_RATE)
-    print(f"Total so far: Income £{total_income:.2f}, Total Expenses: £{total_expenses:.2f}, Total Profit: £{total_profit:.2f} , Tax so far (est): £{tax_estimate:.2f}")
+    return total_income, total_expenses, total_profit, tax_estimate
 
-def show_day(chosen_date):
+def show_total():
+    total_income, total_expenses, total_profit, tax_estimate = total_figures()
+    print(f"Tax Year {tax_year} so far: Income: £{total_income:.2f}, Expenses: £{total_expenses:.2f}, Profit: £{total_profit:.2f}, Tax Estimate: £{tax_estimate:.2f}")
+    
+def day_figures(chosen_date):
     day_income = 0
     day_expenses = 0
     for e in entries:
@@ -47,7 +55,11 @@ def show_day(chosen_date):
             day_income = day_income + e["income"]
             day_expenses = day_expenses + e["expenses"]
     day_profit = day_income - day_expenses
-    print(f"Day {chosen_date} Income: £{day_income:.2f}, Expenses: £{day_expenses:.2f}, Profit: £{day_profit:.2f}")
+    return day_income, day_expenses, day_profit
+
+def show_day(chosen_date):
+    day_income, day_expenses, day_profit = day_figures(chosen_date)
+    print(f"Date {chosen_date} Income: £{day_income:.2f}, Expenses: £{day_expenses:.2f}, Profit: £{day_profit:.2f}")
 
 def show_all_weeks():
     weeks= []
@@ -91,25 +103,26 @@ def show_month(month):
     month_profit = month_income - month_expenses
     print(f"Month {month} Income: £{month_income:.2f}, Expenses: £{month_expenses:.2f}, Profit: £{month_profit:.2f}")
 
-if __name__ == "__main__":
-    today = datetime.now().date()
+
+today = datetime.now().date()
     #tax_year_start = date(2026, 4, 6)
-    if today >= date(today.year, 4, 6):
-        tax_year_start = date(today.year, 4, 6)
-    else:
-        tax_year_start = date(today.year - 1, 4, 6)
-    days = (today - tax_year_start).days
-    week = days // 7 + 1
-    tax_year = tax_year_start.year
+if today >= date(today.year, 4, 6):
+    tax_year_start = date(today.year, 4, 6)
+else:
+    tax_year_start = date(today.year - 1, 4, 6)
+days = (today - tax_year_start).days
+week = days // 7 + 1
+tax_year = tax_year_start.year
 
-    try:
+try:
 
-        f = open("entries.json", "r")
-        entries = json.load(f)
-        f.close()
-    except FileNotFoundError:
-        entries = []
+    f = open("entries.json", "r")
+    entries = json.load(f)
+    f.close()
+except FileNotFoundError:
+    entries = []
 
+if __name__ == "__main__":
     while True:
         show_total()
         print("1--- Add today's income and expenses: ")
