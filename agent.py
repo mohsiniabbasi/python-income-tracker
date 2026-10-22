@@ -1,7 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
-from tracker import week_figures, day_figures, total_figures,today, week, tax_year
+from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year
 
 load_dotenv()
 gemini_key = os.getenv("GEMINI_API_KEY")
@@ -15,8 +15,11 @@ def ask_gemini(question):
     answer = data["candidates"][0]["content"]["parts"][0]["text"]
     return answer
 
+print("Hi, I’m your income tracker assistant.")
+print("Add today’s income and expenses, or see a day, a week, or your totals and tax so far \n For example: I made 280 today and spent 25 on fuel")
+
 while True:
-    question = input("You (x to exit): ")
+    question = input("\nWhat would you like to do? (x to exit): ")
     if question == "x":
         break
 
@@ -25,11 +28,12 @@ while True:
               "week N (figures for tax-year week N), "
               "day YYYY-MM-DD (figures for one date), "
               "total (totals and tax estimate for this tax year), "
+              "add followed by today's income and expenses as two numbers (for example: add 280 25). Income is money earned. Expenses are money spent or costs such as fuel, parking or food. Never add expenses to income. "
               "none (anything else). "
-              "Reply with the tool only, like: week 27, day 2026-10-13, total, none. "
+              "Reply with the tool only, like: week 27, day 2026-10-13, total, add 280 25, none. "
               "Question: " + question)
     tool = ask_gemini(choose).strip().lower()
-    print("Tool chosen:", tool)
+   # print("Tool chosen:", tool)
 
     parts = tool.split()
 
@@ -42,6 +46,15 @@ while True:
     elif parts[0] == "total":
         income, expenses, profit, tax = total_figures()
         answer = f"Tax year {tax_year} so far: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}, estimated tax £{tax:.2f}."
+    elif parts[0] == "add":
+        income = abs(float(parts[1]))
+        expenses = abs(float(parts[2]))
+        sure = input(f"Save today: income £{income:.2f}, expenses £{expenses:.2f}? (yes/no): ")
+        if sure.lower() in ["yes", "y"]:
+            entry = add_entry(income, expenses)
+            answer = f"Saved. Today's profit: £{entry['profit']:.2f}."
+        else:
+            answer = "Not saved."
     else:
         answer = "I can only answer about your income records."
 
