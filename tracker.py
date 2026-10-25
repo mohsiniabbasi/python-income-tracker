@@ -112,15 +112,20 @@ def add_entry(income, expenses):
     f.close()
     return entry
 
-today = datetime.now().date()
+def week_and_tax_year(any_date):
+  
     #tax_year_start = date(2026, 4, 6)
-if today >= date(today.year, 4, 6):
-    tax_year_start = date(today.year, 4, 6)
-else:
-    tax_year_start = date(today.year - 1, 4, 6)
-days = (today - tax_year_start).days
-week = days // 7 + 1
-tax_year = tax_year_start.year
+    if any_date >= date(any_date.year, 4, 6):
+        tax_year_start = date(any_date.year, 4, 6)
+    else:
+        tax_year_start = date(any_date.year - 1, 4, 6)
+    days = (any_date - tax_year_start).days
+    week = days // 7 + 1
+    tax_year = tax_year_start.year
+    return week, tax_year
+
+today = datetime.now().date()
+week, tax_year = week_and_tax_year(today)
 
 try:
 
