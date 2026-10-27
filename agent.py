@@ -51,7 +51,7 @@ while True:
         expenses = abs(float(parts[2]))
         sure = input(f"Save today: income £{income:.2f}, expenses £{expenses:.2f}? (yes/no): ")
         if sure.lower() in ["yes", "y"]:
-            entry = add_entry(income, expenses)
+            entry = add_entry(today, income, expenses)
             answer = f"Saved. Today's profit: £{entry['profit']:.2f}."
         else:
             answer = "Not saved."
