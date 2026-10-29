@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import json
 
 PERSONAL_ALLOWANCE = 12570
@@ -124,6 +124,23 @@ def week_and_tax_year(any_date):
     week = days // 7 + 1
     tax_year = tax_year_start.year
     return week, tax_year
+
+def missing_dates():
+    saved_dates = []
+    for e in entries:
+        if e["tax_year"] == tax_year:
+            saved_dates.append(e["date"])
+
+    saved_dates.sort()
+    if saved_dates == []:
+        return []
+    check_date = date.fromisoformat(saved_dates[0])
+    missing = []
+    while check_date < today:
+        if str(check_date) not in saved_dates:
+            missing.append(check_date)
+        check_date = check_date + timedelta(days=1)
+    return missing
 
 today = datetime.now().date()
 week, tax_year = week_and_tax_year(today)
