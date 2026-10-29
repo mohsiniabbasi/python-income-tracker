@@ -1,7 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
-from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year
+from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year, missing_dates
 
 load_dotenv()
 gemini_key = os.getenv("GEMINI_API_KEY")
@@ -17,6 +17,13 @@ def ask_gemini(question):
 
 print("Hi, I’m your income tracker assistant.")
 print("Add today’s income and expenses, or see a day, a week, or your totals and tax so far \n For example: I made 280 today and spent 25 on fuel")
+
+for missing_day in missing_dates():
+    reply = input(f"No entry for {missing_day}. Type income and expenses like 102 12, or 0 0 if you did not work: ")
+    numbers = reply.split()
+    day_income = abs(float(numbers[0]))
+    day_expenses = abs(float(numbers[1]))
+    add_entry(missing_day, day_income, day_expenses)
 
 while True:
     question = input("\nWhat would you like to do? (x to exit): ")
