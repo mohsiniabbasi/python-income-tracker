@@ -35,7 +35,11 @@ def total_figures():
         if e["tax_year"] == tax_year:
             total_income = total_income + e["income"]
             total_expenses = total_expenses + e["expenses"]
-    total_profit = total_income - total_expenses
+    total_costs = 0
+    for c in costs:
+        if c["tax_year"] == tax_year:
+            total_costs = total_costs + c["amount"]
+    total_profit = total_income - total_expenses - total_costs
     allowance_so_far = PERSONAL_ALLOWANCE * week / 52
     taxable = total_profit - allowance_so_far
     if taxable < 0:
@@ -113,6 +117,14 @@ def add_entry(entry_date, income, expenses):
     f.close()
     return entry
 
+def add_cost(cost_name, cost_amount):
+    cost = {"tax_year": tax_year, "name": cost_name, "amount": cost_amount}
+    costs.append(cost)
+    f = open("entries-costs.json", "w")
+    json.dump(costs, f, indent=2)
+    f.close()
+    return cost
+
 def week_and_tax_year(any_date):
   
     #tax_year_start = date(2026, 4, 6)
@@ -153,6 +165,13 @@ try:
 except FileNotFoundError:
     entries = []
 
+try:
+    f = open("entries-costs.json", "r")
+    costs = json.load(f)
+    f.close()
+except FileNotFoundError:
+    costs = []
+
 if __name__ == "__main__":
     while True:
         show_total()
@@ -161,6 +180,7 @@ if __name__ == "__main__":
         print("3--- Enter a date (yyyy-mm-dd) to see that day's figures: ")
         print("4--- Show all weeks: ")
         print("5--- Show all months: ")
+        print("6--- Add a yearly cost: ")
         print("x--- Exit: ")
         choice = input("Choose: ")
         if choice == "1":
@@ -183,7 +203,12 @@ if __name__ == "__main__":
             show_all_weeks()
         elif choice == "5":
             show_all_months()
+        elif choice == "6":
+            cost_name = input("Enter the name of the expense: ")
+            cost_amount = ask_amount("Enter the amount of the expense: £")
+            cost = add_cost(cost_name, cost_amount)
+            print(f"Cost '{cost_name}' of £{cost_amount:.2f} added for tax year {tax_year}.")
         elif choice == "x":
             break
         else:
-            print("Invalid choice. Please select 1, 2, 3, 4, 5, x.")
+            print("Invalid choice. Please select 1, 2, 3, 4, 5, 6, x.")
