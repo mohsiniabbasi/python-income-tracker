@@ -125,6 +125,30 @@ def add_cost(cost_name, cost_amount):
     f.close()
     return cost
 
+def show_costs():
+    this_year = []
+    for c in costs:
+        if c["tax_year"] == tax_year:
+            this_year.append(c)
+    if this_year == []:
+        print("No costs recorded for this tax year. Choose 6 to add one")
+    number = 1
+    for c in this_year:
+        print(f"{number}. {c['name']}: £{c['amount']:.2f}")
+        number = number + 1
+    return this_year
+
+def delete_cost(this_year, pick):
+    if pick < 1 or pick > len(this_year):
+        print("No cost with that number.")
+        return
+    cost = this_year[pick - 1]
+    costs.remove(cost)
+    f = open("entries-costs.json", "w")
+    json.dump(costs, f, indent=2)
+    f.close()
+    print(f"Deleted cost '{cost['name']}.")
+    
 def week_and_tax_year(any_date):
   
     #tax_year_start = date(2026, 4, 6)
@@ -181,6 +205,8 @@ if __name__ == "__main__":
         print("4--- Show all weeks: ")
         print("5--- Show all months: ")
         print("6--- Add a yearly cost: ")
+        print("7--- Show yearly costs: ")
+        print("8--- Delete a yearly cost: ")
         print("x--- Exit: ")
         choice = input("Choose: ")
         if choice == "1":
@@ -208,7 +234,14 @@ if __name__ == "__main__":
             cost_amount = ask_amount("Enter the amount of the expense: £")
             cost = add_cost(cost_name, cost_amount)
             print(f"Cost '{cost_name}' of £{cost_amount:.2f} added for tax year {tax_year}.")
+        elif choice == "7":
+            show_costs()
+        elif choice == "8":
+            this_year = show_costs()
+            if this_year != []:
+                pick = int(ask_amount("Enter the number of the cost to delete: "))
+                delete_cost(this_year, pick)
         elif choice == "x":
             break
         else:
-            print("Invalid choice. Please select 1, 2, 3, 4, 5, 6, x.")
+            print("Invalid choice. Please select 1, 2, 3, 4, 5, 6, 7, 8, x.")
