@@ -4,6 +4,9 @@ import json
 PERSONAL_ALLOWANCE = 12570
 BASIC_RATE = 0.20
 NI_RATE = 0.06
+BASIC_BAND = 37700
+HIGHER_RATE = 0.40
+NI_HIGHER_RATE = 0.02
 
 def ask_amount(question):
 
@@ -44,7 +47,14 @@ def total_figures():
     taxable = total_profit - allowance_so_far
     if taxable < 0:
         taxable = 0
-    tax_estimate = taxable * (BASIC_RATE + NI_RATE)
+    basic_band_so_far = BASIC_BAND * week / 52
+    if taxable <= basic_band_so_far:
+        tax_estimate = taxable * (BASIC_RATE + NI_RATE)
+    else:
+        basic_tax = basic_band_so_far * (BASIC_RATE + NI_RATE)
+        higher_tax = (taxable - basic_band_so_far) * (HIGHER_RATE + NI_HIGHER_RATE)
+        tax_estimate = basic_tax + higher_tax
+
     return total_income, total_expenses, total_profit, tax_estimate
 
 def show_total():
