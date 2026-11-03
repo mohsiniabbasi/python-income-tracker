@@ -19,10 +19,15 @@ print("Hi, I’m your income tracker assistant.")
 print("Add today’s income and expenses, or see a day, a week, or your totals and tax so far \n For example: I made 280 today and spent 25 on fuel")
 
 for missing_day in missing_dates():
-    reply = input(f"No entry for {missing_day}. Type income and expenses like 102 12, or 0 0 if you did not work: ")
-    numbers = reply.split()
-    day_income = abs(float(numbers[0]))
-    day_expenses = abs(float(numbers[1]))
+    while True:
+        reply = input(f"No entry for {missing_day}. Type income and expenses like 102 12, or 0 0 if you did not work: ")
+        numbers = reply.split()
+        try:
+            day_income = abs(float(numbers[0]))
+            day_expenses = abs(float(numbers[1]))
+            break
+        except (ValueError, IndexError):
+            print("Please type two numbers, like 102 12.")
     add_entry(missing_day, day_income, day_expenses)
 
 while True:
@@ -41,30 +46,31 @@ while True:
               "Question: " + question)
     tool = ask_gemini(choose).strip().lower()
    # print("Tool chosen:", tool)
+    try:
+        parts = tool.split()
 
-    parts = tool.split()
-
-    if parts[0] == "week":
-        income, expenses, profit = week_figures(int(parts[1]))
-        answer = f"Week {parts[1]}: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}."
-    elif parts[0] == "day":
-        income, expenses, profit = day_figures(parts[1])
-        answer = f"{parts[1]}: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}."
-    elif parts[0] == "total":
-        income, expenses, profit, tax = total_figures()
-        answer = f"Tax year {tax_year} so far: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}, estimated tax £{tax:.2f}."
-    elif parts[0] == "add":
-        income = abs(float(parts[1]))
-        expenses = abs(float(parts[2]))
-        sure = input(f"Save today: income £{income:.2f}, expenses £{expenses:.2f}? (yes/no): ")
-        if sure.lower() in ["yes", "y"]:
-            entry = add_entry(today, income, expenses)
-            answer = f"Saved. Today's profit: £{entry['profit']:.2f}."
+        if parts[0] == "week":
+            income, expenses, profit = week_figures(int(parts[1]))
+            answer = f"Week {parts[1]}: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}."
+        elif parts[0] == "day":
+            income, expenses, profit = day_figures(parts[1])
+            answer = f"{parts[1]}: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}."
+        elif parts[0] == "total":
+            income, expenses, profit, tax = total_figures()
+            answer = f"Tax year {tax_year} so far: income £{income:.2f}, expenses £{expenses:.2f}, profit £{profit:.2f}, estimated tax £{tax:.2f}."
+        elif parts[0] == "add":
+            income = abs(float(parts[1]))
+            expenses = abs(float(parts[2]))
+            sure = input(f"Save today: income £{income:.2f}, expenses £{expenses:.2f}? (yes/no): ")
+            if sure.lower() in ["yes", "y"]:
+                entry = add_entry(today, income, expenses)
+                answer = f"Saved. Today's profit: £{entry['profit']:.2f}."
+            else:
+                answer = "Not saved."
         else:
-            answer = "Not saved."
-    else:
-        answer = "I can only answer about your income records."
-
+            answer = "I can only answer about your income records."
+    except (ValueError, IndexError):
+        answer = "Sorry, I didn't catch that. Please ask again."
 
     print("Agent:", answer)
 
