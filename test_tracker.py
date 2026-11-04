@@ -1,4 +1,5 @@
-from tracker import month_label
+from tracker import month_label, week_and_tax_year
+from datetime import date
 
 def test_april_1_to_5():
     assert month_label("2026-04-05") == "2026-04 (1-5)"
@@ -11,3 +12,7 @@ def test_normal_month():
     assert month_label("2026-05-01") == "2026-05"
     assert month_label("2026-06-15") == "2026-06"
     assert month_label("2026-07-31") == "2026-07"
+
+def test_first_day_of_tax_year():
+    assert week_and_tax_year(date(2026, 4, 6)) == (1, 2026)
+    assert week_and_tax_year(date(2026, 4, 5)) == (53, 2025)
