@@ -1,4 +1,4 @@
-from tracker import month_label, week_and_tax_year
+from tracker import month_label, week_and_tax_year, work_out_tax
 from datetime import date
 
 def test_april_1_to_5():
@@ -16,3 +16,6 @@ def test_normal_month():
 def test_first_day_of_tax_year():
     assert week_and_tax_year(date(2026, 4, 6)) == (1, 2026)
     assert week_and_tax_year(date(2026, 4, 5)) == (53, 2025)
+
+def test_tax_full_year_30000():
+    assert round(work_out_tax(30000, 52), 2) == 4531.80

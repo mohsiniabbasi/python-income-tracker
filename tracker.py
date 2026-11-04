@@ -31,6 +31,20 @@ def show_week(week_number):
     week_income, week_expenses, week_profit = week_figures(week_number)
     print(f"Week number {week_number} Income: £{week_income:.2f}, Expenses: £{week_expenses:.2f}, Profit: £{week_profit:.2f}")
 
+def work_out_tax(total_profit, week):
+    allowance_so_far = PERSONAL_ALLOWANCE * week / 52
+    taxable = total_profit - allowance_so_far
+    if taxable < 0:
+        taxable = 0
+    basic_band_so_far = BASIC_BAND * week / 52
+    if taxable <= basic_band_so_far:
+        tax_estimate = taxable * (BASIC_RATE + NI_RATE)
+    else:
+        basic_tax = basic_band_so_far * (BASIC_RATE + NI_RATE)
+        higher_tax = (taxable - basic_band_so_far) * (HIGHER_RATE + NI_HIGHER_RATE)
+        tax_estimate = basic_tax + higher_tax
+    return tax_estimate
+
 def total_figures():
     total_income = 0
     total_expenses = 0
@@ -43,17 +57,7 @@ def total_figures():
         if c["tax_year"] == tax_year:
             total_costs = total_costs + c["amount"]
     total_profit = total_income - total_expenses - total_costs
-    allowance_so_far = PERSONAL_ALLOWANCE * week / 52
-    taxable = total_profit - allowance_so_far
-    if taxable < 0:
-        taxable = 0
-    basic_band_so_far = BASIC_BAND * week / 52
-    if taxable <= basic_band_so_far:
-        tax_estimate = taxable * (BASIC_RATE + NI_RATE)
-    else:
-        basic_tax = basic_band_so_far * (BASIC_RATE + NI_RATE)
-        higher_tax = (taxable - basic_band_so_far) * (HIGHER_RATE + NI_HIGHER_RATE)
-        tax_estimate = basic_tax + higher_tax
+    tax_estimate = work_out_tax(total_profit, week)
 
     return total_income, total_expenses, total_profit, tax_estimate
 
