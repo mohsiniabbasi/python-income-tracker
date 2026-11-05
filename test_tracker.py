@@ -1,3 +1,4 @@
+import tracker
 from tracker import month_label, week_and_tax_year, work_out_tax
 from datetime import date
 
@@ -19,3 +20,10 @@ def test_first_day_of_tax_year():
 
 def test_tax_full_year_30000():
     assert round(work_out_tax(30000, 52), 2) == 4531.80
+
+def test_missing_dates():
+    tracker.entries = [{"date": "2026-10-20", "tax_year": 2026},
+                       {"date": "2026-10-23", "tax_year": 2026}]
+    tracker.tax_year = 2026
+    tracker.today = date(2026, 10, 24)
+    assert tracker.missing_dates() == [date(2026,10,21) , date(2026,10,22)]
