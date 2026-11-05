@@ -27,3 +27,9 @@ def test_missing_dates():
     tracker.tax_year = 2026
     tracker.today = date(2026, 10, 24)
     assert tracker.missing_dates() == [date(2026,10,21) , date(2026,10,22)]
+
+def test_tax_full_year_50270():
+    assert round(work_out_tax(50270, 52), 2) == 9802.00
+
+def test_tax_full_year_60000():
+    assert round(work_out_tax(60000, 52), 2) == 13888.60
