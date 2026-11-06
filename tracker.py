@@ -168,6 +168,16 @@ def ask_yearly_costs():
         if c["tax_year"] == tax_year:
             return
     print(f"No costs recorded for this tax year {tax_year} yet.")
+    last_year = []
+    for c in costs:
+        if c["tax_year"] == tax_year - 1:
+            last_year.append(c["name"])
+    for cost_name in last_year:
+        cost_amount = ask_amount(f"{cost_name} this year (0 if you no longer have it): £")
+        if cost_amount > 0:
+            add_cost(cost_name, cost_amount)
+    if last_year != []:
+        print("Now add any new costs for this tax year.")
     while True:
         choice = input(f"Type a cost and amount, like Insurance 1200, or done to finish: ")
         if choice.lower() == "done":
