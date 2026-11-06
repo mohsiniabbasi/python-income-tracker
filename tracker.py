@@ -163,6 +163,21 @@ def delete_cost(this_year, pick):
     f.close()
     print(f"Deleted cost '{cost['name']}.")
     
+def ask_yearly_costs():
+    for c in costs:
+        if c["tax_year"] == tax_year:
+            return
+    print(f"No costs recorded for this tax year {tax_year} yet.")
+    while True:
+        choice = input(f"Type a cost and amount, like Insurance 1200, or done to finish: ")
+        if choice.lower() == "done":
+            break
+        try:
+            cost_name, cost_amount = choice.rsplit(" ", 1)
+            add_cost(cost_name, abs(float(cost_amount)))
+        except ValueError:
+            print("Please type a name then a number, like Road tax 190.")
+
 def week_and_tax_year(any_date):
   
     #tax_year_start = date(2026, 4, 6)
@@ -211,6 +226,7 @@ except FileNotFoundError:
     costs = []
 
 if __name__ == "__main__":
+    ask_yearly_costs()
     while True:
         show_total()
         print("1--- Add today's income and expenses: ")
