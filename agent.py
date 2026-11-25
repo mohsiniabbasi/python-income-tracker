@@ -1,7 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
-from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year, missing_dates, ask_yearly_costs, add_cost
+from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year, missing_dates, ask_yearly_costs, add_cost, costs
 
 load_dotenv()
 gemini_key = os.getenv("GEMINI_API_KEY")
@@ -43,8 +43,9 @@ while True:
               "total (totals and tax estimate for this tax year), "
               "add followed by today's income and expenses as two numbers (for example: add 280 25). Income is money earned. Expenses are money spent or costs such as fuel, parking or food. Never add expenses to income. "
               "cost followed by the cost name and the yearly amount (for example: cost insurance 1200). Yearly costs are once-a-year bills such as insurance, MOT, road tax or council licence. "
+              "costs (list this tax year's yearly costs and their total). "
               "none (anything else). "
-              "Reply with the tool only, like: week 27, day 2026-10-13, total, add 280 25, cost insurance 1200, none. "
+              "Reply with the tool only, like: week 27, day 2026-10-13, total, add 280 25, cost insurance 1200, costs, none. "
               "Question: " + question)
     tool = ask_gemini(choose).strip().lower()
    # print("Tool chosen:", tool)
@@ -79,6 +80,13 @@ while True:
                 answer = f"Saved yearly cost: {cost_name} £{cost_amount:.2f}."
             else:
                 answer = "Not saved."
+        elif parts[0] == "costs":
+            total = 0
+            for c in costs:
+                if c["tax_year"] == tax_year:
+                    print(f"{c['name']}: £{c['amount']:.2f}")
+                    total = total + c["amount"]
+            answer = f"Total yearly costs for tax year {tax_year}: £{total:.2f} in total."
         else:
             answer = "I can only answer about your income records."
     except (ValueError, IndexError):
