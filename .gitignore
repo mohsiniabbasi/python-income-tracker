@@ -2,3 +2,4 @@ entries*.json
 __pycache__/
 .pytest_cache/
 .env
+*.db

@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 import json
+import sqlite3
 
 PERSONAL_ALLOWANCE = 12570
 BASIC_RATE = 0.20
@@ -234,6 +235,11 @@ try:
     f.close()
 except FileNotFoundError:
     costs = []
+
+db = sqlite3.connect("tracker.db")
+db.execute("CREATE TABLE IF NOT EXISTS entries (date TEXT, week INTEGER, tax_year INTEGER, income REAL, expenses REAL, profit REAL)")
+db.execute("CREATE TABLE IF NOT EXISTS costs (tax_year INTEGER, name TEXT, amount REAL)")
+db.commit()
 
 if __name__ == "__main__":
     ask_yearly_costs()
