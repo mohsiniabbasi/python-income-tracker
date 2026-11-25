@@ -1,7 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
-from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year, missing_dates, ask_yearly_costs
+from tracker import week_figures, day_figures, total_figures, add_entry, today, week, tax_year, missing_dates, ask_yearly_costs, add_cost
 
 load_dotenv()
 gemini_key = os.getenv("GEMINI_API_KEY")
@@ -42,8 +42,9 @@ while True:
               "day YYYY-MM-DD (figures for one date), "
               "total (totals and tax estimate for this tax year), "
               "add followed by today's income and expenses as two numbers (for example: add 280 25). Income is money earned. Expenses are money spent or costs such as fuel, parking or food. Never add expenses to income. "
+              "cost followed by the cost name and the yearly amount (for example: cost insurance 1200). Yearly costs are once-a-year bills such as insurance, MOT, road tax or council licence. "
               "none (anything else). "
-              "Reply with the tool only, like: week 27, day 2026-10-13, total, add 280 25, none. "
+              "Reply with the tool only, like: week 27, day 2026-10-13, total, add 280 25, cost insurance 1200, none. "
               "Question: " + question)
     tool = ask_gemini(choose).strip().lower()
    # print("Tool chosen:", tool)
@@ -66,6 +67,16 @@ while True:
             if sure.lower() in ["yes", "y"]:
                 entry = add_entry(today, income, expenses)
                 answer = f"Saved. Today's profit: £{entry['profit']:.2f}."
+            else:
+                answer = "Not saved."
+        elif parts[0] == "cost":
+            cost_text, amount_text = tool.rsplit(" ", 1)
+            cost_name = cost_text[5:]
+            cost_amount = abs(float(amount_text))
+            sure = input(f"Save yearly cost: {cost_name} £{cost_amount:.2f}? (yes/no): ")
+            if sure.lower() in ["yes", "y"]:
+                add_cost(cost_name, cost_amount)
+                answer = f"Saved yearly cost: {cost_name} £{cost_amount:.2f}."
             else:
                 answer = "Not saved."
         else:
